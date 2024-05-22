@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         ☄️拷贝漫画增强☄️
 // @namespace    http://tampermonkey.net/
-// @version      10.8
-// @description  拷贝漫画去广告🚫、加速访问🚀、批量下载⬇️、并排布局📖、图片高度自适应↕️、辅助翻页↔️、页码显示⏱、侧边目录栏📑、暗夜模式🌙、章节评论💬
+// @version      11.0
+// @description  拷贝漫画去广告🚫、加速访问🚀、并排布局📖、图片高度自适应↕️、辅助翻页↔️、页码显示⏱、侧边目录栏📑、暗夜模式🌙、章节评论💬
 // @author       Byaidu
 // @match        *://*.copymanga.com/*
 // @match        *://*.copymanga.org/*
@@ -10,12 +10,14 @@
 // @match        *://*.copymanga.info/*
 // @match        *://*.copymanga.site/*
 // @match        *://*.copymanga.tv/*
+// @match        *://*.mangacopy.com/*
 // @match        *://copymanga.com/*
 // @match        *://copymanga.org/*
 // @match        *://copymanga.net/*
 // @match        *://copymanga.info/*
 // @match        *://copymanga.site/*
 // @match        *://copymanga.tv/*
+// @match        *://mangacopy.com/*
 // @license      GNU General Public License v3.0 or later
 // @resource     element_css https://unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css
 // @resource     animate_css https://unpkg.com/animate.css@4.1.1/animate.min.css
@@ -31,6 +33,8 @@
 // @grant        GM_getResourceText
 // @grant        GM_xmlhttpRequest
 // @run-at       document-start
+// @downloadURL https://update.greasyfork.org/scripts/421371/%E2%98%84%EF%B8%8F%E6%8B%B7%E8%B4%9D%E6%BC%AB%E7%94%BB%E5%A2%9E%E5%BC%BA%E2%98%84%EF%B8%8F.user.js
+// @updateURL https://update.greasyfork.org/scripts/421371/%E2%98%84%EF%B8%8F%E6%8B%B7%E8%B4%9D%E6%BC%AB%E7%94%BB%E5%A2%9E%E5%BC%BA%E2%98%84%EF%B8%8F.meta.js
 // ==/UserScript==
 
 var large_mode = 1;
@@ -43,7 +47,7 @@ axios.interceptors.response.use(undefined, (err) => {
 function route() {
     if (document.getElementsByClassName('ban').length) banPage();
     else if (/^\/comic\/.*\/.*$/.test(location.pathname)) comicPage();
-    else if (/^\/comic\/[^\/]*$/.test(location.pathname)) tablePage(1);
+    //else if (/^\/comic\/[^\/]*$/.test(location.pathname)) tablePage(1);
     else if (/^\/$/.test(location.pathname)) homePage();
     else if (/^\/h5\/details\/comic\/[^\/]*$/.test(location.pathname)) tablePage(0);
 }
@@ -615,11 +619,12 @@ async function comicPage() {
     // 加载章节
     apiChapters(comic)
         .then(function (response) {
-            var content = response.groups.default.chapters;
-            content.forEach((i) => {
+            // var content = response.groups.default.chapters;
+            var content = Object.values(response.groups).flatMap(obj => obj.chapters);
+            content.forEach((i,index) => {
                 if (location.href.indexOf(i.id) >= 0) {
-                    app.cur_ch = i.index;
-                    GM_addStyle('.el-menu>li:nth-child(' + (i.index + 1) + '){background:rgba(255,165,0,.5) !important}');
+                    app.cur_ch = index;
+                    GM_addStyle('.el-menu>li:nth-child(' + (index + 1) + '){background:rgba(255,165,0,.5) !important}');
                 }
                 app.sidebar_data.push({
                     title: i.name,
