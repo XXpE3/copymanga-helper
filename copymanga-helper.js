@@ -397,7 +397,7 @@ async function comicPage() {
       object-fit: contain;
     }
     .inner_img {
-      max-width: 100%;
+      width: 100vw;
     }
     .el-menu {
       border-right: 0px;
@@ -634,7 +634,7 @@ async function comicPage() {
         })
 
     // 加载评论
-    app.load_comment();
+    // app.load_comment();
 
     //上下方向键滚动页面，左右方向键切换章节
     function scrollUp() {
